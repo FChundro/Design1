@@ -5,7 +5,7 @@ notification channel") onto a single Composio tool call, so the automation
 handlers never touch raw slugs or response envelopes.
 """
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from loguru import logger
 
@@ -13,14 +13,15 @@ from . import slugs
 from .client import unwrap
 from .config import ComposioSettings
 
-if TYPE_CHECKING:
-    from composio import Composio
-
 
 class Actions:
-    """Product-level operations bound to one Composio client and settings."""
+    """Product-level operations bound to one Composio client and settings.
 
-    def __init__(self, client: Composio, settings: ComposioSettings) -> None:
+    ``client`` is the SDK's ``Composio`` instance (see :func:`.client.build_client`);
+    it is typed ``Any`` because the optional SDK is not part of the type environment.
+    """
+
+    def __init__(self, client: Any, settings: ComposioSettings) -> None:
         self._client = client
         self._settings = settings
 

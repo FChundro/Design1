@@ -1,26 +1,26 @@
 """Composio client construction and connection/slug verification helpers."""
 
+import importlib
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from loguru import logger
 
 from .config import ComposioSettings
 from .slugs import KNOWN_ACTIONS, KNOWN_TRIGGERS
 
-if TYPE_CHECKING:
-    from composio import Composio
 
-
-def build_client(settings: ComposioSettings) -> Composio:
+def build_client(settings: ComposioSettings) -> Any:
     """Return an authenticated Composio client.
 
-    ``composio`` is an optional dependency; import it lazily so the rest of Free
-    Claude Code keeps working when the Composio SDK is not installed.
+    ``composio`` is an optional dependency kept out of the project lockfile, so
+    it is imported dynamically: the rest of Free Claude Code (and the type
+    checker, which runs without it installed) never depends on the SDK being
+    present. The returned object is the SDK's ``Composio`` client.
     """
 
     try:
-        from composio import Composio
+        composio = importlib.import_module("composio")
     except ModuleNotFoundError as exc:  # pragma: no cover - import guard
         raise RuntimeError(
             "The Composio SDK is not installed. These automations are optional and "
@@ -28,7 +28,7 @@ def build_client(settings: ComposioSettings) -> Composio:
             "`uv pip install composio` (or `pip install composio`)."
         ) from exc
 
-    return Composio(api_key=settings.api_key)
+    return composio.Composio(api_key=settings.api_key)
 
 
 @dataclass(frozen=True)
@@ -43,7 +43,7 @@ class VerifyReport:
         return not self.missing_actions and not self.missing_triggers
 
 
-def verify(client: Composio, settings: ComposioSettings) -> VerifyReport:
+def verify(client: Any, settings: ComposioSettings) -> VerifyReport:
     """Check that every configured slug resolves against the live account.
 
     A slug can drift when a toolkit version changes; this surfaces such drift
@@ -61,7 +61,7 @@ def verify(client: Composio, settings: ComposioSettings) -> VerifyReport:
     )
 
 
-def _action_exists(client: Composio, settings: ComposioSettings, slug: str) -> bool:
+def _action_exists(client: Any, settings: ComposioSettings, slug: str) -> bool:
     try:
         tools = client.tools.get(user_id=settings.user_id, tools=[slug])
     except Exception as exc:  # network/SDK errors are all treated as "unknown"
@@ -70,7 +70,7 @@ def _action_exists(client: Composio, settings: ComposioSettings, slug: str) -> b
     return bool(tools)
 
 
-def _trigger_exists(client: Composio, slug: str) -> bool:
+def _trigger_exists(client: Any, slug: str) -> bool:
     try:
         client.triggers.get_type(slug=slug)
     except Exception as exc:  # any failure means "cannot verify"

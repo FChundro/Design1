@@ -1,6 +1,6 @@
 """Register the enabled triggers and dispatch their events to the handlers."""
 
-from typing import TYPE_CHECKING
+from typing import Any
 
 from loguru import logger
 
@@ -9,11 +9,8 @@ from .client import build_client
 from .config import ComposioSettings, load_settings
 from .handlers import AutomationEvent, dispatch, selected_automations
 
-if TYPE_CHECKING:
-    from composio import Composio
 
-
-def ensure_triggers(client: Composio, settings: ComposioSettings) -> set[str]:
+def ensure_triggers(client: Any, settings: ComposioSettings) -> set[str]:
     """Create a trigger instance for each distinct trigger the run needs.
 
     Composio de-duplicates instances per (trigger, connected account), so calling
