@@ -5,17 +5,34 @@ Handlers are deliberately pure with respect to Composio: each takes a decoded
 tested with a fake ``Actions`` and a hand-built payload.
 """
 
-from __future__ import annotations
-
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Protocol
 
 from loguru import logger
 
 from . import slugs
-from .actions import Actions
 from .config import ComposioSettings
+
+
+class SupportsActions(Protocol):
+    """The subset of :class:`~.actions.Actions` the handlers depend on.
+
+    Typing against this Protocol keeps handlers decoupled from the concrete
+    ``Actions`` (and lets tests pass a lightweight recording fake).
+    """
+
+    def add_labels(self, *, issue_number: int, labels: list[str]) -> dict[str, Any]: ...
+
+    def notify(self, message: str) -> dict[str, Any] | None: ...
+
+    def create_issue(
+        self, *, title: str, body: str, labels: list[str] | None = None
+    ) -> dict[str, Any]: ...
+
+    def send_email(
+        self, *, recipient: str, subject: str, body: str
+    ) -> dict[str, Any]: ...
 
 
 @dataclass(frozen=True)
@@ -47,7 +64,9 @@ class HandlerResult:
     detail: str = ""
 
 
-HandlerFn = Callable[[AutomationEvent, Actions, ComposioSettings], HandlerResult]
+HandlerFn = Callable[
+    [AutomationEvent, SupportsActions, ComposioSettings], HandlerResult
+]
 
 
 @dataclass(frozen=True)
@@ -93,7 +112,7 @@ def _classify_labels(title: str, body: str) -> list[str]:
 
 
 def handle_issue_triage(
-    event: AutomationEvent, actions: Actions, settings: ComposioSettings
+    event: AutomationEvent, actions: SupportsActions, settings: ComposioSettings
 ) -> HandlerResult:
     """Label a new issue and announce it in the notification channel."""
 
@@ -119,7 +138,7 @@ def handle_issue_triage(
 
 
 def handle_ci_failure(
-    event: AutomationEvent, actions: Actions, settings: ComposioSettings
+    event: AutomationEvent, actions: SupportsActions, settings: ComposioSettings
 ) -> HandlerResult:
     """Alert the channel when a workflow run finishes in failure."""
 
@@ -142,7 +161,7 @@ def handle_ci_failure(
 
 
 def handle_release_notes(
-    event: AutomationEvent, actions: Actions, settings: ComposioSettings
+    event: AutomationEvent, actions: SupportsActions, settings: ComposioSettings
 ) -> HandlerResult:
     """Announce a published release and optionally email the notes."""
 
@@ -169,7 +188,7 @@ def handle_release_notes(
 
 
 def handle_inbox_to_issue(
-    event: AutomationEvent, actions: Actions, settings: ComposioSettings
+    event: AutomationEvent, actions: SupportsActions, settings: ComposioSettings
 ) -> HandlerResult:
     """Turn a labelled inbox email into a GitHub issue."""
 
@@ -218,7 +237,7 @@ def selected_automations(settings: ComposioSettings) -> list[Automation]:
 
 
 def dispatch(
-    event: AutomationEvent, actions: Actions, settings: ComposioSettings
+    event: AutomationEvent, actions: SupportsActions, settings: ComposioSettings
 ) -> list[HandlerResult]:
     """Run every enabled automation whose trigger matches ``event``."""
 

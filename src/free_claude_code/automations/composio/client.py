@@ -1,7 +1,5 @@
 """Composio client construction and connection/slug verification helpers."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
@@ -18,15 +16,16 @@ def build_client(settings: ComposioSettings) -> Composio:
     """Return an authenticated Composio client.
 
     ``composio`` is an optional dependency; import it lazily so the rest of Free
-    Claude Code keeps working when the automations extra is not installed.
+    Claude Code keeps working when the Composio SDK is not installed.
     """
 
     try:
         from composio import Composio
     except ModuleNotFoundError as exc:  # pragma: no cover - import guard
         raise RuntimeError(
-            "The Composio SDK is not installed. Install the automations extra: "
-            "`uv pip install -e '.[automations]'` (or `pip install composio`)."
+            "The Composio SDK is not installed. These automations are optional and "
+            "kept out of the project lockfile; install it separately with "
+            "`uv pip install composio` (or `pip install composio`)."
         ) from exc
 
     return Composio(api_key=settings.api_key)

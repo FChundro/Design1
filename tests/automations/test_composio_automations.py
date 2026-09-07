@@ -1,7 +1,5 @@
 """Unit tests for the Composio automations: config, classification, dispatch."""
 
-from __future__ import annotations
-
 from typing import Any
 
 import pytest
@@ -133,7 +131,7 @@ def test_issue_triage_labels_and_notifies():
             }
         },
     )
-    results = dispatch(event, actions, _settings())  # type: ignore[arg-type]
+    results = dispatch(event, actions, _settings())
     assert _kinds(actions) == ["add_labels", "notify"]
     assert actions.calls[0][1]["labels"] == ["bug"]
     assert results[0].detail.startswith("labelled #7")
@@ -158,11 +156,11 @@ def test_ci_failure_only_fires_on_failure():
         },
     )
     a1 = RecordingActions()
-    assert dispatch(passing, a1, settings)[0].skipped is True  # type: ignore[arg-type]
+    assert dispatch(passing, a1, settings)[0].skipped is True
     assert _kinds(a1) == []
 
     a2 = RecordingActions()
-    dispatch(failing, a2, settings)  # type: ignore[arg-type]
+    dispatch(failing, a2, settings)
     assert _kinds(a2) == ["notify"]
 
 
@@ -174,7 +172,7 @@ def test_release_notes_emails_when_recipient_set():
         {"action": "published", "release": {"tag_name": "v1.2.3", "body": "notes"}},
     )
     actions = RecordingActions()
-    dispatch(event, actions, settings)  # type: ignore[arg-type]
+    dispatch(event, actions, settings)
     assert _kinds(actions) == ["notify", "send_email"]
 
 
@@ -191,22 +189,22 @@ def test_inbox_to_issue_requires_label():
         {"subject": "Bug from user", "sender": "u@x", "label_ids": ["to-triage"]},
     )
     a1 = RecordingActions()
-    assert dispatch(unlabelled, a1, settings)[0].skipped is True  # type: ignore[arg-type]
+    assert dispatch(unlabelled, a1, settings)[0].skipped is True
 
     a2 = RecordingActions()
-    dispatch(labelled, a2, settings)  # type: ignore[arg-type]
+    dispatch(labelled, a2, settings)
     assert _kinds(a2) == ["create_issue", "notify"]
 
 
 def test_dispatch_ignores_non_matching_trigger():
     actions = RecordingActions()
     event = AutomationEvent("SOME_OTHER_TRIGGER", "GITHUB", {})
-    assert dispatch(event, actions, _settings()) == []  # type: ignore[arg-type]
+    assert dispatch(event, actions, _settings()) == []
 
 
 def test_handler_error_is_isolated():
     class Boom(RecordingActions):
-        def add_labels(self, **_: Any) -> dict[str, Any]:
+        def add_labels(self, *, issue_number: int, labels: list[str]) -> dict[str, Any]:
             raise RuntimeError("boom")
 
     event = AutomationEvent(
@@ -214,5 +212,5 @@ def test_handler_error_is_isolated():
         slugs.TOOLKIT_GITHUB,
         {"issue": {"number": 1, "title": "x", "body": "y"}},
     )
-    results = dispatch(event, Boom(), _settings(enabled=["issue_triage"]))  # type: ignore[arg-type]
+    results = dispatch(event, Boom(), _settings(enabled=["issue_triage"]))
     assert results[0].detail.startswith("error:")

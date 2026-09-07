@@ -5,8 +5,6 @@ notification channel") onto a single Composio tool call, so the automation
 handlers never touch raw slugs or response envelopes.
 """
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
 
 from loguru import logger

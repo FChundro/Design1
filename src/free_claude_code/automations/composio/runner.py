@@ -1,7 +1,5 @@
 """Register the enabled triggers and dispatch their events to the handlers."""
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 from loguru import logger

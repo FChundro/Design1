@@ -1,7 +1,5 @@
 """Command-line entry point: ``python -m free_claude_code.automations.composio``."""
 
-from __future__ import annotations
-
 import argparse
 import sys
 

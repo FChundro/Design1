@@ -7,8 +7,6 @@ verify`` to check, against your live Composio account, that every slug below is
 spelled correctly and available before relying on it.
 """
 
-from __future__ import annotations
-
 from typing import Final
 
 # --- Toolkits ---------------------------------------------------------------

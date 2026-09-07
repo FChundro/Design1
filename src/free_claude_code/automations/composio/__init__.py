@@ -2,16 +2,15 @@
 
 These are optional and event-driven: they connect the project's GitHub, chat,
 and inbox activity to small handlers via Composio's managed triggers and tools.
-Install the extra (``uv pip install -e '.[automations]'``), set the
-``COMPOSIO_*`` environment variables (see ``.env.example``), then run:
+Composio is kept out of the project lockfile; install it separately
+(``uv pip install composio``), set the ``COMPOSIO_*`` environment variables
+(see ``.env.example``), then run:
 
     python -m free_claude_code.automations.composio run
 
 ``verify`` checks that the configured slugs resolve; ``list`` prints the enabled
 automations.
 """
-
-from __future__ import annotations
 
 from .actions import Actions
 from .client import VerifyReport, build_client, verify

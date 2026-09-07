@@ -20,10 +20,11 @@ never raw credentials.
 
 ## Setup
 
-1. **Install the extra**
+1. **Install the Composio SDK** (kept out of the project lockfile, since these
+   automations are optional)
 
    ```bash
-   uv pip install -e '.[automations]'
+   uv pip install composio   # or: pip install composio
    ```
 
 2. **Connect the apps in Composio.** In the Composio dashboard, connect the
