@@ -147,6 +147,11 @@ class Settings(BaseModel):
         default=None, validation_alias="COHERE_API_KEY"
     )
 
+    # ==================== Perplexity Sonar API ====================
+    perplexity_api_key: OptionalNonEmptyString = Field(
+        default=None, validation_alias="PERPLEXITY_API_KEY"
+    )
+
     # ==================== SambaNova Cloud ====================
     sambanova_api_key: OptionalNonEmptyString = Field(
         default=None, validation_alias="SAMBANOVA_API_KEY"
@@ -454,6 +459,9 @@ class Settings(BaseModel):
     )
     cohere_proxy: OptionalNonEmptyString = Field(
         default=None, validation_alias="COHERE_PROXY"
+    )
+    perplexity_proxy: OptionalNonEmptyString = Field(
+        default=None, validation_alias="PERPLEXITY_PROXY"
     )
     sambanova_proxy: OptionalNonEmptyString = Field(
         default=None, validation_alias="SAMBANOVA_PROXY"

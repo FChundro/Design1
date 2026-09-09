@@ -532,6 +532,14 @@ OPENAI_CHAT_PROFILES: dict[str, OpenAIChatProfile] = {
         ),
         postprocessors=(_apply_cohere_request_quirks,),
     ),
+    "perplexity": OpenAIChatProfile(
+        _policy(
+            "PERPLEXITY",
+            ReasoningReplayMode.REASONING_CONTENT,
+            default_max_tokens=ANTHROPIC_DEFAULT_MAX_OUTPUT_TOKENS,
+        ),
+        NO_REASONING,
+    ),
     "wafer": OpenAIChatProfile(
         _policy(
             "WAFER",

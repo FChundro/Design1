@@ -36,6 +36,7 @@ _EXPECTED_PROVIDER_ORDER: tuple[str, ...] = (
     "bedrock",
     "huggingface",
     "cohere",
+    "perplexity",
     "wafer",
     "kimi",
     "kimi_code",
