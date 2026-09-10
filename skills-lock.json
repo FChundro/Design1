@@ -343,6 +343,12 @@
       "skillPath": "skills/seo-audit/SKILL.md",
       "computedHash": "2f336e5c3bb2f73dbcabdc63955d5d09f7b7e4ed43191a6cefdafa20124e7d2b"
     },
+    "seo-audit-marketing": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/seo-audit/SKILL.md",
+      "computedHash": "01f9f8a3feb3ea69c6c212d61189c610f96ef2cc363adc27fd314d78254bf6ae"
+    },
     "seo-backlinks": {
       "source": "AgriciDaniel/claude-seo",
       "sourceType": "github",
