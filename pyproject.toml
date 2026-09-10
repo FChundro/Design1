@@ -141,6 +141,7 @@ python-version = "3.14"
 [tool.ty.analysis]
 # Optional voice_local extra: torch, transformers, librosa for local whisper transcription
 # Optional voice extra: nvidia-riva-client for nvidia_nim transcription provider
+# Optional web-grounding extra: perplexityai for the Perplexity Agent integration
 allowed-unresolved-imports = [
     "torch",
     "transformers",
@@ -148,4 +149,5 @@ allowed-unresolved-imports = [
     "riva.client",
     "pystray",
     "PIL",
+    "perplexity",
 ]
