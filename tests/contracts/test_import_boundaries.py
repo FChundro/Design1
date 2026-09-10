@@ -51,6 +51,7 @@ OPTIONAL_IMPORT_OWNERS = {
     "torch": "free_claude_code.messaging.transcription",
     "transformers": "free_claude_code.messaging.transcription",
     "riva": "free_claude_code.providers.nvidia_nim.voice",
+    "perplexity": "free_claude_code.integrations.perplexity_agent",
 }
 
 

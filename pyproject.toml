@@ -29,7 +29,6 @@ dependencies = [
     "pystray>=0.19.5; sys_platform == 'win32' or sys_platform == 'darwin'",
     "Pillow>=12.0.0; sys_platform == 'win32' or sys_platform == 'darwin'",
     "github-copilot-sdk==1.0.13",
-    "perplexityai>=0.43.5",
 ]
 
 [project.scripts]
@@ -142,6 +141,7 @@ python-version = "3.14"
 [tool.ty.analysis]
 # Optional voice_local extra: torch, transformers, librosa for local whisper transcription
 # Optional voice extra: nvidia-riva-client for nvidia_nim transcription provider
+# Optional web-grounding extra: perplexityai for the Perplexity Agent integration
 allowed-unresolved-imports = [
     "torch",
     "transformers",
@@ -149,4 +149,5 @@ allowed-unresolved-imports = [
     "riva.client",
     "pystray",
     "PIL",
+    "perplexity",
 ]

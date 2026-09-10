@@ -6,6 +6,12 @@ SSE stream. It wraps the official ``perplexity`` SDK
 (``from perplexity import Perplexity``), whose ``responses`` resource targets the
 Agent endpoint (``/v1/responses`` is the OpenAI-compatible alias of ``/v1/agent``).
 
+``perplexityai`` is an *optional* dependency, handled the same way the project
+handles ``torch``/``librosa``/``riva``: it is imported lazily inside the
+functions that need it, so importing this module never requires the SDK. Install
+it with ``uv pip install perplexityai`` (or add it to the project and relock)
+before using :func:`web_grounded_answer`.
+
 The API key is a secret. It is resolved from the ``PERPLEXITY_API_KEY``
 environment variable and is never logged, printed, or embedded in error
 messages. If it is missing, create one at https://console.perplexity.ai and
@@ -22,15 +28,11 @@ the retry hint in its message.
 import os
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from loguru import logger
 
 from free_claude_code.core.failures import ExecutionFailure, FailureKind
-
-if TYPE_CHECKING:
-    from perplexity import Perplexity
-    from perplexity.types.response_create_response import ResponseCreateResponse
 
 PERPLEXITY_API_KEY_ENV = "PERPLEXITY_API_KEY"
 
@@ -119,19 +121,22 @@ def build_client(
     api_key: str | None = None,
     max_retries: int = DEFAULT_MAX_RETRIES,
     timeout: float = DEFAULT_TIMEOUT_S,
-) -> Perplexity:
+) -> Any:
     """Construct a Perplexity SDK client with the resolved key.
 
     The ``perplexity`` import is deferred so importing this module never requires
-    the SDK to be installed until a client is actually built.
+    the optional SDK to be installed until a client is actually built.
     """
-    from perplexity import Perplexity
+    resolved = _resolve_api_key(api_key)
+    try:
+        from perplexity import Perplexity
+    except ImportError as exc:
+        raise ImportError(
+            "The 'perplexityai' package is required for the Perplexity Agent "
+            "integration. Install it with: uv pip install perplexityai"
+        ) from exc
 
-    return Perplexity(
-        api_key=_resolve_api_key(api_key),
-        max_retries=max_retries,
-        timeout=timeout,
-    )
+    return Perplexity(api_key=resolved, max_retries=max_retries, timeout=timeout)
 
 
 def web_grounded_answer(
@@ -145,7 +150,7 @@ def web_grounded_answer(
     previous_response_id: str | None = None,
     instructions: str | None = None,
     max_output_tokens: int | None = None,
-    client: Perplexity | None = None,
+    client: Any | None = None,
 ) -> GroundedAnswer:
     """Ask a web-grounded question and return the answer with its sources.
 
@@ -174,6 +179,8 @@ def web_grounded_answer(
         ExecutionFailure: On an empty query, conflicting ``model``/``preset``, a
             missing key, or any Perplexity API error (mapped to a canonical
             failure kind and status code).
+        ImportError: When the optional ``perplexityai`` package is not installed
+            and no ``client`` was supplied.
     """
     if not query.strip():
         raise ExecutionFailure(
@@ -224,9 +231,7 @@ def web_grounded_answer(
     except Exception as exc:
         raise _map_error(exc) from exc
 
-    from perplexity import Stream
-
-    if isinstance(result, Stream):
+    if not hasattr(result, "output"):
         raise ExecutionFailure(
             kind=FailureKind.UPSTREAM,
             status_code=502,
@@ -258,45 +263,48 @@ def _resolve_tools(
     return []
 
 
-def _parse_response(response: ResponseCreateResponse) -> GroundedAnswer:
-    from perplexity.types.output_item import (
-        MessageOutputItem,
-        SearchResultsOutputItem,
-    )
+def _parse_response(response: Any) -> GroundedAnswer:
+    """Extract answer text, sources, and citations from an Agent response.
 
+    Duck-typed on purpose: it reads the documented fields by attribute rather
+    than importing the optional SDK's models, so it needs no ``perplexity``
+    import and tolerates output-item variants it does not recognize.
+    """
     citations: list[Citation] = []
     sources: list[SearchSource] = []
-    for item in response.output:
-        if isinstance(item, MessageOutputItem):
+    for item in getattr(response, "output", None) or []:
+        item_type = getattr(item, "type", None)
+        if item_type == "message":
             citations.extend(
                 Citation(
-                    url=annotation.url,
-                    title=annotation.title,
-                    start_index=annotation.start_index,
-                    end_index=annotation.end_index,
+                    url=getattr(annotation, "url", None),
+                    title=getattr(annotation, "title", None),
+                    start_index=getattr(annotation, "start_index", None),
+                    end_index=getattr(annotation, "end_index", None),
                 )
-                for content in item.content
-                for annotation in content.annotations or []
+                for content in getattr(item, "content", None) or []
+                for annotation in getattr(content, "annotations", None) or []
             )
-        elif isinstance(item, SearchResultsOutputItem):
+        elif item_type == "search_results":
             sources.extend(
                 SearchSource(
-                    url=result.url,
-                    title=result.title,
-                    snippet=result.snippet,
-                    date=result.date,
-                    last_updated=result.last_updated,
-                    source=result.source,
+                    url=getattr(result, "url", None),
+                    title=getattr(result, "title", None),
+                    snippet=getattr(result, "snippet", None),
+                    date=getattr(result, "date", None),
+                    last_updated=getattr(result, "last_updated", None),
+                    source=getattr(result, "source", None),
                 )
-                for result in item.results
+                for result in getattr(item, "results", None) or []
             )
 
-    usage = response.usage.model_dump() if response.usage is not None else None
+    usage_model = getattr(response, "usage", None)
+    usage = usage_model.model_dump() if usage_model is not None else None
     return GroundedAnswer(
-        text=response.output_text,
-        response_id=response.id,
-        status=response.status,
-        model=response.model,
+        text=getattr(response, "output_text", "") or "",
+        response_id=getattr(response, "id", "") or "",
+        status=getattr(response, "status", "") or "",
+        model=getattr(response, "model", "") or "",
         citations=tuple(citations),
         sources=tuple(sources),
         usage=usage,

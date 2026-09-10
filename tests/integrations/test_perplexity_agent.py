@@ -1,19 +1,15 @@
 """Deterministic unit tests for the Perplexity Agent integration.
 
-No network and no API key are required: response models are built locally with
-``model_construct`` and the SDK client is replaced by monkeypatching
-``build_client``.
+No network and no API key are required. The parsing/request tests use duck-typed
+stub objects (so they run even when the optional ``perplexityai`` package is not
+installed); the error-mapping tests need the SDK's exception classes and are
+skipped with ``importorskip`` when it is absent.
 """
 
+from types import SimpleNamespace
 from typing import Any
 
-import perplexity
 import pytest
-from perplexity.types.annotation import Annotation
-from perplexity.types.content_part import ContentPart
-from perplexity.types.output_item import MessageOutputItem, SearchResultsOutputItem
-from perplexity.types.response_create_response import ResponseCreateResponse
-from perplexity.types.shared.search_result import SearchResult
 
 from free_claude_code.core.failures import ExecutionFailure, FailureKind
 from free_claude_code.integrations import perplexity_agent
@@ -44,18 +40,16 @@ class _FakeClient:
         self.responses = _FakeResponses(result, self.recorded)
 
 
-def _sample_response() -> ResponseCreateResponse:
-    message = MessageOutputItem.model_construct(
-        id="msg_1",
-        role="assistant",
-        status="completed",
+def _sample_response() -> SimpleNamespace:
+    message = SimpleNamespace(
         type="message",
+        role="assistant",
         content=[
-            ContentPart.model_construct(
-                text="MCP is an open protocol.",
+            SimpleNamespace(
                 type="output_text",
+                text="MCP is an open protocol.",
                 annotations=[
-                    Annotation.model_construct(
+                    SimpleNamespace(
                         url="https://modelcontextprotocol.io",
                         title="MCP",
                         start_index=0,
@@ -65,11 +59,11 @@ def _sample_response() -> ResponseCreateResponse:
             )
         ],
     )
-    search = SearchResultsOutputItem.model_construct(
+    search = SimpleNamespace(
         type="search_results",
         queries=["what is mcp"],
         results=[
-            SearchResult.model_construct(
+            SimpleNamespace(
                 id="src_1",
                 snippet="An open protocol.",
                 title="Model Context Protocol",
@@ -80,15 +74,13 @@ def _sample_response() -> ResponseCreateResponse:
             )
         ],
     )
-    return ResponseCreateResponse.model_construct(
+    return SimpleNamespace(
         id="resp_1",
-        created_at=0,
         model="test-model",
-        object="response",
         status="completed",
         output=[message, search],
+        output_text="MCP is an open protocol.",
         usage=None,
-        previous_response_id=None,
     )
 
 
@@ -211,6 +203,7 @@ def test_build_client_without_key_raises_authentication(
 def test_api_error_is_mapped_to_execution_failure(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    perplexity = pytest.importorskip("perplexity")
     rate_limit = perplexity.RateLimitError.__new__(perplexity.RateLimitError)
     _install_fake(monkeypatch, rate_limit)
 
@@ -222,19 +215,16 @@ def test_api_error_is_mapped_to_execution_failure(
     assert excinfo.value.retryable is True
 
 
-@pytest.mark.parametrize(
-    ("exc", "kind", "retryable"),
-    [
+def test_map_error_matrix() -> None:
+    perplexity = pytest.importorskip("perplexity")
+    cases = [
         (perplexity.APITimeoutError, FailureKind.TIMEOUT, True),
         (perplexity.AuthenticationError, FailureKind.AUTHENTICATION, False),
         (perplexity.PermissionDeniedError, FailureKind.PERMISSION, False),
         (perplexity.InternalServerError, FailureKind.OVERLOADED, True),
-    ],
-)
-def test_map_error_matrix(
-    exc: type[Exception], kind: FailureKind, retryable: bool
-) -> None:
-    instance = exc.__new__(exc)
-    failure = perplexity_agent._map_error(instance)
-    assert failure.kind is kind
-    assert failure.retryable is retryable
+    ]
+    for exc_type, kind, retryable in cases:
+        instance = exc_type.__new__(exc_type)
+        failure = perplexity_agent._map_error(instance)
+        assert failure.kind is kind
+        assert failure.retryable is retryable
