@@ -142,8 +142,13 @@ Set `returnPropertyQuota: true` to monitor consumption. Simple reports cost ~1-1
 ```python
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import (
-    DateRange, Dimension, Filter, FilterExpression,
-    Metric, OrderBy, RunReportRequest,
+    DateRange,
+    Dimension,
+    Filter,
+    FilterExpression,
+    Metric,
+    OrderBy,
+    RunReportRequest,
 )
 from google.oauth2 import service_account
 
@@ -168,7 +173,9 @@ request = RunReportRequest(
             ),
         )
     ),
-    order_bys=[OrderBy(metric=OrderBy.MetricOrderBy(metric_name="sessions"), desc=True)],
+    order_bys=[
+        OrderBy(metric=OrderBy.MetricOrderBy(metric_name="sessions"), desc=True)
+    ],
     limit=50,
     return_property_quota=True,
 )
