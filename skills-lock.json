@@ -338,12 +338,6 @@
       "computedHash": "0394a5c504ae52c22cbac7c14591f489439ae48c89e402e4a12392a6ce3398de"
     },
     "seo-audit": {
-      "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "skillPath": "skills/seo-audit/SKILL.md",
-      "computedHash": "01f9f8a3feb3ea69c6c212d61189c610f96ef2cc363adc27fd314d78254bf6ae"
-    },
-    "seo-audit-full": {
       "source": "AgriciDaniel/claude-seo",
       "sourceType": "github",
       "skillPath": "skills/seo-audit/SKILL.md",
