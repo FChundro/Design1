@@ -88,6 +88,9 @@ dev = [
 [tool.ruff]
 target-version = "py314"
 line-length = 88
+# Vendored third-party skill (soy-rafa/claude-mcp-sentinel, MIT). Not held to this
+# repo's lint/format rules; kept verbatim so it stays in sync with upstream.
+extend-exclude = [".agents/skills/mcp-sentinel"]
 
 [tool.ruff.lint]
 select = [
@@ -134,6 +137,11 @@ markers = [
     "smoke_target(name): route a smoke test behind FCC_SMOKE_TARGETS",
     "xdist_group(name): group smoke provider items under pytest-xdist --dist=loadgroup",
 ]
+
+[tool.ty.src]
+# Vendored third-party skill (soy-rafa/claude-mcp-sentinel, MIT); not type-checked
+# against this repo's standards. See the matching ruff extend-exclude above.
+exclude = [".agents/skills/mcp-sentinel"]
 
 [tool.ty.environment]
 python-version = "3.14"
