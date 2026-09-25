@@ -1,5 +1,9 @@
 __pycache__
-.claude
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
+.claude/hooks/*
+!.claude/hooks/session-start.sh
 .cursor
 .pytest_cache
 .ruff_cache
