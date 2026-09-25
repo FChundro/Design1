@@ -136,6 +136,25 @@ render("hooks-05", s2(5, 5, f"""
 <div style="margin-top:70px;font-size:58px;line-height:1.4">Comment <span class="gold" style="font-weight:bold">KING</span></div>
 <div style="position:absolute;bottom:0;font-size:42px;color:#c9ccd6">Save + share with a creator friend &darr;</div>"""))
 
+
+# ---------- Gumroad store images ----------
+render("gumroad-cover", f"""
+<div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 90px;gap:70px;
+ background:radial-gradient(circle at 20% 50%,#23242b 0%,#0f1014 65%)">
+ <div style="width:230px;flex:none">{CROWN}</div>
+ <div>
+  <div style="font-size:30px;letter-spacing:6px" class="gold">DIGITAL KINGS</div>
+  <div style="margin-top:18px;font-size:92px;font-weight:bold;line-height:1.02">The AI <span class="gold">Income</span> Kit</div>
+  <div style="margin-top:28px;font-size:36px;color:#c9ccd6;line-height:1.35">75 AI prompts &middot; 7-day launch plan &middot; 30 viral hooks</div>
+ </div>
+</div>""", 1280, 720)
+render("gumroad-thumbnail", f"""
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+ background:radial-gradient(circle at 50% 40%,#23242b 0%,#0f1014 70%)">
+ <div style="width:170px">{CROWN}</div>
+ <div style="margin-top:34px;font-size:64px;font-weight:bold;line-height:1.05">AI <span class="gold">Income</span><br>Kit</div>
+ <div style="margin-top:22px;font-size:26px;color:#c9ccd6">75 prompts to make money online</div>
+</div>""", 600, 600)
 import json
 (SRC / "jobs.json").write_text(json.dumps(JOBS))
 subprocess.run(["node", str(SRC / "shoot.js")], check=True)

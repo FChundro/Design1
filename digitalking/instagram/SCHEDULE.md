@@ -3,7 +3,7 @@
 | Planned day | Post | Files | Status |
 |---|---|---|---|
 | Fri 25 Sep | 5 digital products you can make this weekend | carousel-01…08 | ✅ Posted (id 17932675107400336) |
-| Sat 26 Sep | 3 AI prompts to find your side hustle | prompts-01…06 | Ready, waiting for your "post" |
+| Sat 26 Sep | 3 AI prompts to find your side hustle | prompts-01…06 | ✅ Posted Fri 25 Sep (id 18126690845485891) |
 | Sun 27 Sep | The Google reviews side hustle | reviews-01…07 | Ready, waiting for your "post" |
 | Mon 28 Sep | 10 hooks that stop the scroll | hooks-01…05 | Ready, waiting for your "post" |
 
