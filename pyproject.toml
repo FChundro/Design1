@@ -28,7 +28,7 @@ dependencies = [
     "requests[socks]>=2.34.2",
     "pystray>=0.19.5; sys_platform == 'win32' or sys_platform == 'darwin'",
     "Pillow>=12.0.0; sys_platform == 'win32' or sys_platform == 'darwin'",
-    "github-copilot-sdk==1.0.13",
+    "github-copilot-sdk==1.0.14",
 ]
 
 [project.scripts]
@@ -123,7 +123,16 @@ skip-magic-trailing-comma = false
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = "-n auto"
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    # starlette.testclient (0.52.x, the newest FastAPI 0.141 allows) still uses the
+    # anyio.abc.BlockingPortal alias that anyio 4.15 deprecates.
+    "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning:starlette.testclient",
+    # anyio 4.13+ (latest 4.15.1) creates a task's coroutine before the task
+    # starts; cancelling connect_tcp's happy-eyeballs task group then drops
+    # try_connect() unawaited, which fails an arbitrary test intermittently.
+    "ignore:coroutine 'connect_tcp.<locals>.try_connect' was never awaited:RuntimeWarning",
+]
 testpaths = ["tests"]
 markers = [
     "live: opt-in local smoke tests that can touch real services",
