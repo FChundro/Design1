@@ -37,6 +37,8 @@ VERCEL_AI_GATEWAY_DEFAULT_BASE = "https://ai-gateway.vercel.sh/v1"
 BEDROCK_DEFAULT_BASE = "https://bedrock-mantle.us-east-1.api.aws/v1"
 HUGGINGFACE_DEFAULT_BASE = "https://router.huggingface.co/v1"
 COHERE_DEFAULT_BASE = "https://api.cohere.ai/compatibility/v1"
+# Perplexity Sonar OpenAI-compatible Chat Completions API.
+PERPLEXITY_DEFAULT_BASE = "https://api.perplexity.ai"
 # Z.ai OpenAI-compatible Chat Completions APIs. The endpoint selects billing.
 ZAI_CODING_DEFAULT_BASE = "https://api.z.ai/api/coding/paas/v4"
 ZAI_API_DEFAULT_BASE = "https://api.z.ai/api/paas/v4"
@@ -394,6 +396,15 @@ PROVIDER_CATALOG: dict[str, ProviderDescriptor] = {
         credential_attr="cohere_api_key",
         default_base_url=COHERE_DEFAULT_BASE,
         proxy_attr="cohere_proxy",
+    ),
+    "perplexity": ProviderDescriptor(
+        provider_id="perplexity",
+        display_name="Perplexity",
+        credential_env="PERPLEXITY_API_KEY",
+        credential_url="https://www.perplexity.ai/account/api/keys",
+        credential_attr="perplexity_api_key",
+        default_base_url=PERPLEXITY_DEFAULT_BASE,
+        proxy_attr="perplexity_proxy",
     ),
     "wafer": ProviderDescriptor(
         provider_id="wafer",

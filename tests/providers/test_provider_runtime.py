@@ -96,6 +96,7 @@ def _make_settings(**overrides):
     mock.bedrock_base_url = BEDROCK_DEFAULT_BASE
     mock.huggingface_api_key = "test_huggingface_key"
     mock.cohere_api_key = "test_cohere_key"
+    mock.perplexity_api_key = "test_perplexity_key"
     mock.zai_api_key = "test_zai_key"
     mock.tokenrouter_api_key = "test_tokenrouter_key"
     mock.tokenrouter_base_url = TOKENROUTER_DEFAULT_BASE
@@ -128,6 +129,7 @@ def _make_settings(**overrides):
     mock.bedrock_proxy = None
     mock.huggingface_proxy = None
     mock.cohere_proxy = None
+    mock.perplexity_proxy = None
     mock.zai_proxy = None
     mock.zai_api_proxy = None
     mock.tokenrouter_proxy = None
@@ -883,6 +885,7 @@ def test_create_provider_instantiates_each_builtin():
         "bedrock": OpenAIChatProvider,
         "huggingface": OpenAIChatProvider,
         "cohere": OpenAIChatProvider,
+        "perplexity": OpenAIChatProvider,
         "zai": OpenAIChatProvider,
         "zai_api": OpenAIChatProvider,
         "tokenrouter": OpenAIChatProvider,

@@ -89,6 +89,13 @@ _PROVIDER_FIELD_OVERRIDES: dict[str, ProviderFieldOverride] = {
         "label": "Cohere API Key",
         "description": "Cohere API key for the OpenAI-compatible Compatibility API.",
     },
+    "PERPLEXITY_API_KEY": {
+        "label": "Perplexity API Key",
+        "description": (
+            "Perplexity API key for the OpenAI-compatible Sonar Chat Completions "
+            "API at api.perplexity.ai (create at perplexity.ai/account/api/keys)."
+        ),
+    },
     "ZAI_API_KEY": {
         "label": "Z.ai API Key",
         "description": (
