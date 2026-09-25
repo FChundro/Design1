@@ -1,5 +1,5 @@
 #!/bin/bash
-# SessionStart hook: install the project's Python dependencies in Claude Code on the web.
+# SessionStart hook: install the project's dependencies in Claude Code on the web.
 set -euo pipefail
 
 if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
@@ -8,20 +8,34 @@ fi
 
 cd "$CLAUDE_PROJECT_DIR"
 
-# pyproject.toml pins uv >= 0.11.16; the image ships an older uv, so install a
-# current one via pip and put it first on PATH for this session.
+# pyproject.toml pins uv >= 0.11.16, but the image ships an older uv in
+# ~/.local/bin. Install a current uv via pip and point the ~/.local/bin entries
+# at it. Changing PATH instead would also put /usr/local/bin's older Node ahead
+# of Node 22.
 python3 -m pip install --quiet --disable-pip-version-check --root-user-action=ignore "uv>=0.11.16"
 UV_BIN_DIR="$(dirname "$(python3 -c 'import uv; print(uv.find_uv_bin())')")"
-export PATH="$UV_BIN_DIR:$PATH"
-if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
-  echo "export PATH=\"$UV_BIN_DIR:\$PATH\"" >> "$CLAUDE_ENV_FILE"
-fi
+mkdir -p "$HOME/.local/bin"
+for bin in uv uvx; do
+  ln -sf "$UV_BIN_DIR/$bin" "$HOME/.local/bin/$bin"
+done
 
 # Installs runtime + dev dependency groups (ruff, ty, pytest) into .venv.
 uv sync
 
-# Playwright CLI for browser automation. It uses the preinstalled Chromium via
-# .playwright/cli.config.json, since browser downloads are blocked here.
+# Playwright CLI for browser automation. Browser downloads are blocked here, so
+# point it at the preinstalled Chromium (the config is generated, not committed,
+# because this path only exists in the web environment).
 if ! command -v playwright-cli >/dev/null 2>&1; then
   npm install -g @playwright/cli@latest
 fi
+mkdir -p .playwright
+cat > .playwright/cli.config.json << 'EOF'
+{
+  "browser": {
+    "browserName": "chromium",
+    "launchOptions": {
+      "executablePath": "/opt/pw-browsers/chromium"
+    }
+  }
+}
+EOF
