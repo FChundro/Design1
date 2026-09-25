@@ -39,3 +39,9 @@ cat > .playwright/cli.config.json << 'EOF'
   }
 }
 EOF
+
+# Optional tools (OmniRoute, Headroom, claude-mem) take minutes to install the
+# first time, so set them up in the background instead of blocking startup.
+mkdir -p "$HOME/.cache"
+nohup setsid "$CLAUDE_PROJECT_DIR/.claude/hooks/setup-tools.sh" < /dev/null \
+  >> "$HOME/.cache/claude-session-tools.log" 2>&1 &

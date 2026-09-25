@@ -4,6 +4,7 @@ __pycache__
 !.claude/hooks/
 .claude/hooks/*
 !.claude/hooks/session-start.sh
+!.claude/hooks/setup-tools.sh
 !.claude/skills/
 .cursor
 .pytest_cache
