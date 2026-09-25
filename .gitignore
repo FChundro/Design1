@@ -4,6 +4,7 @@ __pycache__
 !.claude/hooks/
 .claude/hooks/*
 !.claude/hooks/session-start.sh
+!.claude/skills/
 .cursor
 .pytest_cache
 .ruff_cache
@@ -20,3 +21,5 @@ llama_cache
 .smoke-results
 /test-results/
 .vscode
+# Playwright CLI output (may contain credentials)
+.playwright-cli/

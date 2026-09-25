@@ -19,3 +19,9 @@ fi
 
 # Installs runtime + dev dependency groups (ruff, ty, pytest) into .venv.
 uv sync
+
+# Playwright CLI for browser automation. It uses the preinstalled Chromium via
+# .playwright/cli.config.json, since browser downloads are blocked here.
+if ! command -v playwright-cli >/dev/null 2>&1; then
+  npm install -g @playwright/cli@latest
+fi
