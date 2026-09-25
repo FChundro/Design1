@@ -128,6 +128,10 @@ filterwarnings = [
     # starlette.testclient (0.52.x, the newest FastAPI 0.141 allows) still uses the
     # anyio.abc.BlockingPortal alias that anyio 4.15 deprecates.
     "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning:starlette.testclient",
+    # anyio 4.13+ (latest 4.15.1) creates a task's coroutine before the task
+    # starts; cancelling connect_tcp's happy-eyeballs task group then drops
+    # try_connect() unawaited, which fails an arbitrary test intermittently.
+    "ignore:coroutine 'connect_tcp.<locals>.try_connect' was never awaited:RuntimeWarning",
 ]
 testpaths = ["tests"]
 markers = [
