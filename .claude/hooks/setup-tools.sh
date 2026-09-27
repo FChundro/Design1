@@ -7,7 +7,7 @@
 set -uo pipefail
 
 # The image's /usr/local/bin ships an older Node; these tools need Node 22.
-export PATH="/opt/node22/bin:$HOME/.local/bin:$PATH"
+export PATH="/opt/node22/bin:$HOME/.npm-global/bin:$HOME/.local/bin:$PATH"
 
 log() { echo "[$(date -u +%H:%M:%S)] $*"; }
 pip_install() {
