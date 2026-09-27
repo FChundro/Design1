@@ -22,6 +22,16 @@ done
 # Installs runtime + dev dependency groups (ruff, ty, pytest) into .venv.
 uv sync
 
+# Global npm installs go to a user-owned prefix. Its bin dir holds no node, so
+# putting it first on PATH cannot shadow Node 22.
+NPM_PREFIX="$HOME/.npm-global"
+mkdir -p "$NPM_PREFIX/bin"
+npm config set prefix "$NPM_PREFIX"
+export PATH="$NPM_PREFIX/bin:$PATH"
+if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
+  echo "export PATH=\"$NPM_PREFIX/bin:\$PATH\"" >> "$CLAUDE_ENV_FILE"
+fi
+
 # Playwright CLI for browser automation. Browser downloads are blocked here, so
 # point it at the preinstalled Chromium (the config is generated, not committed,
 # because this path only exists in the web environment).
