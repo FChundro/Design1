@@ -7,7 +7,7 @@
 set -uo pipefail
 
 # The image's /usr/local/bin ships an older Node; these tools need Node 22.
-export PATH="/opt/node22/bin:$HOME/.npm-global/bin:$HOME/.local/bin:$PATH"
+export PATH="/opt/node22/bin:$HOME/.npm-global/bin:$HOME/.local/bin:$HOME/.bun/bin:$PATH"
 
 log() { echo "[$(date -u +%H:%M:%S)] $*"; }
 pip_install() {
@@ -57,8 +57,53 @@ setup_claude_mem() {
   fi
 }
 
+setup_dsh() {
+  # DeepSeek Harness CLI; it reads DEEPSEEK_API_KEY from the environment.
+  command -v dsh >/dev/null || npm install -g @deepseek-ai/dsh
+}
+
+setup_claude_webkit() {
+  # Make the claude-webkit skills available in every session. Its CLAUDE.md is
+  # deliberately not installed: it would start the landing-page interview.
+  local dir="$HOME/claude-webkit"
+  [ -d "$dir/.git" ] || git clone --depth 1 https://github.com/Hainrixz/claude-webkit.git "$dir"
+  mkdir -p "$HOME/.claude/skills"
+  for skill in "$dir"/.claude/skills/*/; do
+    ln -sfn "${skill%/}" "$HOME/.claude/skills/$(basename "$skill")"
+  done
+}
+
+setup_gstack() {
+  local dir="$HOME/.claude/skills/gstack"
+  [ -d "$dir/.git" ] || git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git "$dir"
+  [ -x "$dir/browse/dist/browse" ] || (cd "$dir" && ./setup < /dev/null)
+  # gstack downloads its own headless Chromium from cdn.playwright.dev, which the
+  # network policy may block. If it is missing, alias the image's preinstalled
+  # headless shell under the build number gstack's Playwright looks for.
+  local want have
+  want=$(cd "$dir" && bunx playwright install --dry-run chromium-headless-shell 2>/dev/null \
+    | grep -oE 'chromium_headless_shell-[0-9]+' | head -1)
+  have=$(ls -d /opt/pw-browsers/chromium_headless_shell-* 2>/dev/null | head -1)
+  if [ -n "$want" ] && [ -n "$have" ] && [ ! -e "/opt/pw-browsers/$want" ]; then
+    local target="/opt/pw-browsers/$want/chrome-headless-shell-linux64"
+    mkdir -p "$target"
+    for f in "$have"/chrome-linux/*; do ln -sfn "$f" "$target/"; done
+    ln -sfn "$have/chrome-linux/headless_shell" "$target/chrome-headless-shell"
+    touch "/opt/pw-browsers/$want/INSTALLATION_COMPLETE" "/opt/pw-browsers/$want/DEPENDENCIES_VALIDATED"
+  fi
+  # The gstack README's install step adds this section to the user CLAUDE.md.
+  if ! grep -q '^## gstack' "$HOME/.claude/CLAUDE.md" 2>/dev/null; then
+    cat >> "$HOME/.claude/CLAUDE.md" << 'EOF'
+
+## gstack
+Use the /browse skill from gstack for all web browsing. Never use mcp__claude-in-chrome__* tools.
+Available gstack skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /design-shotgun, /design-html, /review, /deslop-shared-libs, /test-audit, /ship, /land-and-deploy, /canary, /benchmark, /browse, /connect-chrome, /qa, /qa-only, /design-review, /scrape, /setup-browser-cookies, /setup-deploy, /setup-gbrain, /retro, /investigate, /document-release, /document-generate, /codex, /cso, /autoplan, /plan-devex-review, /devex-review, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade, /learn.
+EOF
+  fi
+}
+
 mkdir -p "$HOME/.cache"
-for tool in omniroute headroom claude_mem; do
+for tool in omniroute headroom claude_mem dsh claude_webkit gstack; do
   log "setting up $tool"
   if "setup_$tool"; then log "$tool ready"; else log "WARNING: $tool setup failed"; fi
 done
