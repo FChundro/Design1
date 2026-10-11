@@ -73,6 +73,24 @@ setup_claude_webkit() {
   done
 }
 
+setup_ui_ux_pro_max() {
+  # claude-webkit ships an older ui-ux-pro-max; replace it with this pinned
+  # release and its companion design skills. Runs after setup_claude_webkit.
+  local dir="$HOME/ui-ux-pro-max-skill"
+  local rev=67803eac81607188194aea9842a723b89326d90d
+  if [ "$(git -C "$dir" rev-parse HEAD 2>/dev/null)" != "$rev" ]; then
+    rm -rf "$dir"
+    git init -q "$dir"
+    git -C "$dir" fetch -q --depth 1 https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git "$rev" || return 1
+    git -C "$dir" checkout -q FETCH_HEAD
+  fi
+  mkdir -p "$HOME/.claude/skills"
+  for skill in ui-ux-pro-max banner-design brand design design-system slides ui-styling; do
+    rm -rf "$HOME/.claude/skills/$skill"
+    ln -s "$dir/.claude/skills/$skill" "$HOME/.claude/skills/$skill"
+  done
+}
+
 setup_gstack() {
   local dir="$HOME/.claude/skills/gstack"
   [ -d "$dir/.git" ] || git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git "$dir"
@@ -103,7 +121,7 @@ EOF
 }
 
 mkdir -p "$HOME/.cache"
-for tool in omniroute headroom claude_mem dsh claude_webkit gstack; do
+for tool in omniroute headroom claude_mem dsh claude_webkit ui_ux_pro_max gstack; do
   log "setting up $tool"
   if "setup_$tool"; then log "$tool ready"; else log "WARNING: $tool setup failed"; fi
 done
