@@ -77,7 +77,7 @@ setup_ui_ux_pro_max() {
   # claude-webkit ships an older ui-ux-pro-max; replace it with this pinned
   # release and its companion design skills. Runs after setup_claude_webkit.
   local dir="$HOME/ui-ux-pro-max-skill"
-  local rev=67803eac81607188194aea9842a723b89326d90d
+  local rev=a38d04c3d5c298c851dbe5e6ee1965ee3de42cb5 # v2.15.0
   if [ "$(git -C "$dir" rev-parse HEAD 2>/dev/null)" != "$rev" ]; then
     rm -rf "$dir"
     git init -q "$dir"
