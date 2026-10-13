@@ -38,13 +38,17 @@ setup_omniroute() {
 
 setup_headroom() {
   if ! python3 -m pip show headroom-ai >/dev/null 2>&1; then
-    # Debian-packaged PyJWT and cryptography cannot be upgraded in place by pip,
-    # and the Debian cryptography crashes when loaded with headroom's deps.
-    pip_install --ignore-installed PyJWT cryptography
-    pip_install "headroom-ai[all]"
+    # Debian-packaged PyJWT, cryptography and PyYAML cannot be upgraded in place
+    # by pip (no RECORD file), which aborts the headroom install; the Debian
+    # cryptography also crashes when loaded with headroom's deps.
+    pip_install --ignore-installed PyJWT cryptography PyYAML
+    pip_install "headroom-ai[all]" || return 1
   fi
+  command -v headroom >/dev/null || return 1
   if ! running http://127.0.0.1:8787/health; then
     start_bg headroom-proxy headroom proxy --budget 10 --budget-period daily
+    for _ in $(seq 20); do running http://127.0.0.1:8787/health && return 0; sleep 2; done
+    return 1
   fi
 }
 
@@ -64,6 +68,11 @@ setup_claude_mem() {
   if ! running http://127.0.0.1:37700/; then
     npx -y claude-mem start
   fi
+  # The worker can lose a startup race at boot and leave a diagnostic
+  # CAPTURE_BROKEN marker; clear it once the worker is reachable.
+  for _ in $(seq 15); do running http://127.0.0.1:37700/ && break; sleep 2; done
+  running http://127.0.0.1:37700/ || return 1
+  rm -f "$HOME/.claude-mem/CAPTURE_BROKEN"
 }
 
 setup_dsh() {
