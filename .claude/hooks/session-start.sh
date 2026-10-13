@@ -19,6 +19,11 @@ for bin in uv uvx; do
   ln -sf "$UV_BIN_DIR/$bin" "$HOME/.local/bin/$bin"
 done
 
+# OpenTelemetry SDK and OTLP/HTTP exporter for the system Python, so they are
+# available outside the project .venv in every session.
+python3 -m pip install --quiet --disable-pip-version-check --root-user-action=ignore \
+  opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
+
 # Installs runtime + dev dependency groups (ruff, ty, pytest) into .venv.
 uv sync
 
