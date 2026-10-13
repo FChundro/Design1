@@ -25,6 +25,15 @@ setup_omniroute() {
     # Loopback only: OmniRoute otherwise listens on 0.0.0.0 without an API key.
     OMNIROUTE_SERVER_HOST=127.0.0.1 start_bg omniroute omniroute --no-color
   fi
+  # A fresh OmniRoute has no providers, so it cannot route anything. Connect
+  # Gemini when the environment provides a key; the key is read from the
+  # variable, never passed on the command line.
+  if [ -n "${GEMINI_API_KEY:-}" ]; then
+    for _ in $(seq 30); do running http://127.0.0.1:20128/ && break; sleep 2; done
+    if ! omniroute providers list --no-color 2>/dev/null | grep -qw gemini; then
+      omniroute providers add gemini --credential-env GEMINI_API_KEY --yes
+    fi
+  fi
 }
 
 setup_headroom() {
