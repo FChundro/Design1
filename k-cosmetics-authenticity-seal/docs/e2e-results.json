@@ -1,0 +1,100 @@
+{
+  "ran_at": "2026-11-13T16:18:16.111Z",
+  "results": [
+    {
+      "name": "Verified Record shown with date, time and time zone",
+      "ok": true,
+      "ms": 288
+    },
+    {
+      "name": "Heartbeat refreshes every 60 s (not sooner) and updates the time",
+      "ok": true,
+      "ms": 1750
+    },
+    {
+      "name": "Verification Suspended for suspended and revoked TEST records",
+      "ok": true,
+      "ms": 357
+    },
+    {
+      "name": "Unknown and malformed codes -> Verification Unavailable",
+      "ok": true,
+      "ms": 227
+    },
+    {
+      "name": "Code entry form checks a typed code",
+      "ok": true,
+      "ms": 180
+    },
+    {
+      "name": "Server outage -> Unavailable, keeps last successful time, recovers",
+      "ok": true,
+      "ms": 697
+    },
+    {
+      "name": "Server unreachable (connection refused) -> Unavailable",
+      "ok": true,
+      "ms": 363
+    },
+    {
+      "name": "Forged signature -> rejected as Unavailable",
+      "ok": true,
+      "ms": 366
+    },
+    {
+      "name": "Stale (replayed / wrong-clock) response -> rejected",
+      "ok": true,
+      "ms": 138
+    },
+    {
+      "name": "Tampered response (status flipped in transit) -> rejected",
+      "ok": true,
+      "ms": 363
+    },
+    {
+      "name": "Live revocation: Verified -> Suspended at the next heartbeat",
+      "ok": true,
+      "ms": 370
+    },
+    {
+      "name": "Copied page claiming the official origin -> Unavailable (origin)",
+      "ok": true,
+      "ms": 133
+    },
+    {
+      "name": "Copied page using its own origin -> blocked by CORS -> Unavailable",
+      "ok": true,
+      "ms": 131
+    },
+    {
+      "name": "Copied page relaying genuine signed responses -> Unavailable (origin-bound)",
+      "ok": true,
+      "ms": 204
+    },
+    {
+      "name": "Verification page refuses to be framed (X-Frame-Options / CSP)",
+      "ok": true,
+      "ms": 3
+    },
+    {
+      "name": "Layout iphone-390: pages fit, no horizontal scroll, 44px tap targets",
+      "ok": true,
+      "ms": 657
+    },
+    {
+      "name": "Layout tablet-768: pages fit, no horizontal scroll, 44px tap targets",
+      "ok": true,
+      "ms": 372
+    },
+    {
+      "name": "Desktop product page: small seal lower right, opposite Complete Your Routine",
+      "ok": true,
+      "ms": 174
+    },
+    {
+      "name": "Status announced via aria-live; no cookies set",
+      "ok": true,
+      "ms": 108
+    }
+  ]
+}

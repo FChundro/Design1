@@ -1,0 +1,103 @@
+{%- comment -%}
+  K-Cosmetics EU - secure verification page (PROTOTYPE - not activated).
+  Used by templates/page.authenticity.json -> /pages/authenticity?seal=KC-....
+{%- endcomment -%}
+{{ 'kc-seal.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'kc-seal-heartbeat.js' | asset_url }}" defer></script>
+{%- assign kc_form_id = 'kc-verify-form-' | append: section.id -%}
+
+<section class="kc-verify" aria-labelledby="kc-verify-title-{{ section.id }}">
+  <div class="kc-verify__inner">
+    {%- if section.settings.show_test_banner -%}
+      <p class="kc-verify__banner">PROTOTYPE – test verification records only. Not for customer use.</p>
+    {%- endif -%}
+    <p class="kc-verify__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    <h1 class="kc-verify__title" id="kc-verify-title-{{ section.id }}">{{ section.settings.heading | escape }}</h1>
+    <div class="kc-verify__intro">{{ section.settings.intro }}</div>
+
+    <form class="kc-verify__form" id="{{ kc_form_id }}" novalidate>
+      <label for="kc-seal-code-{{ section.id }}">Code printed on your packaging</label>
+      <input
+        id="kc-seal-code-{{ section.id }}"
+        name="seal"
+        type="text"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        maxlength="40"
+        placeholder="KC-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+      >
+      <button type="submit">Check record</button>
+    </form>
+
+    {%- render 'kc-seal-heartbeat',
+      variant: 'panel',
+      seal_id: '',
+      endpoint: section.settings.endpoint,
+      public_keys: section.settings.public_keys_json,
+      timezone: section.settings.timezone,
+      form_id: kc_form_id
+    -%}
+
+    <div class="kc-verify__explain">
+      <div class="kc-verify__card">
+        <h2>What a Verified Record means</h2>
+        <ul>
+          <li>Our server has a current K-Cosmetics record for this code, checked within the last minute.</li>
+          <li>The product SKU, manufacturer batch and supplier approval on the record are shown above.</li>
+          <li>The answer is digitally signed by K-Cosmetics and checked by your browser.</li>
+        </ul>
+      </div>
+      <div class="kc-verify__card">
+        <h2>What it does not mean</h2>
+        <ul>
+          <li>A valid digital record does not by itself prove that the physical item in your hands is authentic.</li>
+          <li>It is not a third-party certification.</li>
+          <li>A seal image on another website or a screenshot cannot be verified. Check codes only on this page.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="kc-verify__privacy">{{ section.settings.privacy_note | escape }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "KC authenticity check",
+  "tag": "div",
+  "class": "kc-verify-section",
+  "settings": [
+    { "type": "checkbox", "id": "show_test_banner", "label": "Show prototype / test banner", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "K-Cosmetics EU" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Check a product record" },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Introduction",
+      "default": "<p>Enter the code printed on your packaging. We check it against our records live, every 60 seconds, and show when our server last confirmed it.</p>"
+    },
+    {
+      "type": "text",
+      "id": "endpoint",
+      "label": "Heartbeat endpoint",
+      "info": "Production: /apps/kc-seal/heartbeat (Shopify App Proxy). Do not point at a third-party domain.",
+      "default": "/apps/kc-seal/heartbeat"
+    },
+    {
+      "type": "textarea",
+      "id": "public_keys_json",
+      "label": "Pinned public keys (JSON)",
+      "info": "Array of Ed25519 JWKs from GET /api/v1/keys. Public keys only - never paste a private key."
+    },
+    { "type": "text", "id": "timezone", "label": "Display time zone (IANA)", "default": "Europe/Madrid" },
+    {
+      "type": "textarea",
+      "id": "privacy_note",
+      "label": "Privacy note",
+      "default": "Privacy: this check uses no cookies and does not ask for personal data. Your IP address is not stored; a daily-rotating pseudonymous identifier is kept for up to 30 days to prevent abuse. See our Privacy Policy."
+    }
+  ],
+  "presets": [{ "name": "KC authenticity check" }]
+}
+{% endschema %}

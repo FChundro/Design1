@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "kc-authenticity-verify",
+      "settings": {
+        "show_test_banner": true,
+        "endpoint": "/apps/kc-seal/heartbeat",
+        "timezone": "Europe/Madrid"
+      }
+    }
+  },
+  "order": ["main"]
+}
