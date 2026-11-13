@@ -1,0 +1,35 @@
+{%- comment -%}
+  K-Cosmetics EU - small navy heartbeat seal for the product page (PROTOTYPE - not activated).
+  Approved composition: lower right, opposite "Complete Your Routine". Renders
+  nothing unless the product has metafield kc_seal.record_id, so adding the
+  block cannot show an unverifiable seal.
+{%- endcomment -%}
+{%- assign kc_product = closest.product | default: product -%}
+{%- assign kc_record_id = kc_product.metafields.kc_seal.record_id.value -%}
+{%- if kc_record_id != blank -%}
+  {{ 'kc-seal.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'kc-seal-heartbeat.js' | asset_url }}" defer></script>
+  <div class="kc-seal-badge-wrap" {{ block.shopify_attributes }}>
+    {%- render 'kc-seal-heartbeat',
+      variant: 'badge',
+      seal_id: kc_record_id,
+      endpoint: block.settings.endpoint,
+      public_keys: block.settings.public_keys_json,
+      timezone: block.settings.timezone,
+      verify_url: block.settings.verify_url
+    -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "KC heartbeat seal",
+  "settings": [
+    { "type": "text", "id": "endpoint", "label": "Heartbeat endpoint", "default": "/apps/kc-seal/heartbeat" },
+    { "type": "textarea", "id": "public_keys_json", "label": "Pinned public keys (JSON)" },
+    { "type": "text", "id": "timezone", "label": "Display time zone (IANA)", "default": "Europe/Madrid" },
+    { "type": "text", "id": "verify_url", "label": "Verification page path", "default": "/pages/authenticity" }
+  ],
+  "presets": [{ "name": "KC heartbeat seal" }]
+}
+{% endschema %}

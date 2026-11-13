@@ -1,0 +1,54 @@
+{%- comment -%}
+  K-Cosmetics EU - live heartbeat seal markup (PROTOTYPE - not activated).
+  Shared by sections/kc-authenticity-verify.liquid (variant: 'panel') and
+  blocks/kc-seal-badge.liquid (variant: 'badge').
+
+  Params:
+    variant       'badge' | 'panel'
+    seal_id       record code, e.g. product.metafields.kc_seal.record_id (badge) or blank (panel reads ?seal=)
+    endpoint      heartbeat URL; production: '/apps/kc-seal/heartbeat' (Shopify App Proxy, same origin)
+    public_keys   JSON array of pinned Ed25519 JWKs
+    timezone      IANA zone used to display the last verification time
+    verify_url    link to the verification page (badge only)
+    form_id       id of the code entry form (panel only)
+  The seal SVG is the Drive asset KC_seal_navy_gold_small_DRAFT.svg, copied byte-for-byte.
+{%- endcomment -%}
+{%- liquid
+  assign variant = variant | default: 'badge'
+  assign official_origin = shop.url
+  assign tz = timezone | default: 'Europe/Madrid'
+-%}
+<div
+  class="kc-seal kc-seal--{{ variant }}"
+  data-kc-seal
+  data-state="checking"
+  data-seal-id="{{ seal_id | escape }}"
+  data-endpoint="{{ endpoint | default: '/apps/kc-seal/heartbeat' | escape }}"
+  data-official-origin="{{ official_origin | escape }}"
+  data-public-keys="{{ public_keys | escape }}"
+  data-timezone="{{ tz | escape }}"
+  data-interval="60"
+  {% if form_id != blank %}data-form="{{ form_id | escape }}"{% endif %}
+>
+  {%- if variant == 'badge' -%}
+    <a class="kc-seal__link" data-kc-link href="{{ verify_url | default: '/pages/authenticity' | escape }}">
+      <img class="kc-seal__mark" src="{{ 'kc-seal-navy-gold.svg' | asset_url }}" alt="K-Cosmetics seal" width="48" height="48" loading="lazy">
+      <span class="kc-seal__text">
+        <span><span class="kc-seal__status" data-kc-status>Checking record…</span><span class="kc-seal__test" data-kc-test hidden>TEST RECORD</span></span>
+        <span class="kc-seal__time" data-kc-time></span>
+        <span class="kc-seal__ago" data-kc-ago></span>
+      </span>
+    </a>
+  {%- else -%}
+    <img class="kc-seal__mark" src="{{ 'kc-seal-navy-gold.svg' | asset_url }}" alt="K-Cosmetics seal" width="112" height="112">
+    <div class="kc-seal__text">
+      <span><span class="kc-seal__status" data-kc-status>Checking record…</span><span class="kc-seal__test" data-kc-test hidden>TEST RECORD</span></span>
+      <p class="kc-seal__message" data-kc-message></p>
+      <span class="kc-seal__time" data-kc-time></span>
+      <span class="kc-seal__ago" data-kc-ago></span>
+      <p class="kc-seal__note" data-kc-note hidden></p>
+      <div data-kc-details hidden></div>
+    </div>
+  {%- endif -%}
+  <p class="kc-seal__sr" data-kc-live aria-live="polite" role="status"></p>
+</div>

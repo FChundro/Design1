@@ -1,0 +1,113 @@
+/* Demo page chrome only (stands in for the Horizon theme header/body). */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: #faf7f1;
+  color: #242a31;
+}
+body {
+  font-family: "Jost", "Helvetica Neue", Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+.demo-bar {
+  padding: 8px 16px;
+  background: #14243a;
+  color: #e8d8be;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px clamp(16px, 4vw, 48px);
+  border-bottom: 1px solid #e8d8be;
+  background: #faf7f1;
+}
+.demo-header a {
+  color: #14243a;
+  text-decoration: none;
+}
+.demo-brand {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+}
+.demo-nav {
+  display: flex;
+  gap: 18px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.demo-product {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px clamp(16px, 4vw, 48px) 64px;
+}
+.demo-product__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
+}
+.demo-product__media {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  background: #f1e8d9;
+  border-radius: 12px;
+  color: #8a6a3b;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 16px;
+}
+.demo-product h1 {
+  margin: 0 0 8px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 36px);
+  color: #14243a;
+}
+.demo-product p {
+  line-height: 1.7;
+}
+.demo-product__foot {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: end;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid #e8d8be;
+}
+.demo-routine h2 {
+  margin: 0 0 6px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+  font-size: 22px;
+  color: #14243a;
+}
+.demo-routine p {
+  margin: 0;
+  color: #5f5a54;
+  font-size: 14px;
+}
+@media (max-width: 749px) {
+  .demo-product__grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .demo-product__foot {
+    grid-template-columns: 1fr;
+  }
+  .demo-nav {
+    display: none;
+  }
+}

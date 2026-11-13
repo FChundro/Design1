@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Check a product record – K-Cosmetics EU (PROTOTYPE)</title>
+  <link rel="stylesheet" href="demo.css">
+  <link rel="stylesheet" href="/theme-assets/kc-seal.css">
+</head>
+<body>
+  <div class="demo-bar">LOCAL PROTOTYPE – NOT THE LIVE STORE – TEST RECORDS ONLY</div>
+  <header class="demo-header">
+    <a class="demo-brand" href="index.html">K-Cosmetics</a>
+    <nav class="demo-nav" aria-label="Demo"><a href="index.html">Check a record</a><a href="product.html">Product page mock</a></nav>
+  </header>
+
+  <!-- Mirrors theme/sections/kc-authenticity-verify.liquid output -->
+  <section class="kc-verify" aria-labelledby="kc-verify-title">
+    <div class="kc-verify__inner">
+      <p class="kc-verify__banner">PROTOTYPE – test verification records only. Not for customer use.</p>
+      <p class="kc-verify__eyebrow">K-Cosmetics EU</p>
+      <h1 class="kc-verify__title" id="kc-verify-title">Check a product record</h1>
+      <div class="kc-verify__intro"><p>Enter the code printed on your packaging. We check it against our records live, every 60 seconds, and show when our server last confirmed it.</p></div>
+
+      <form class="kc-verify__form" id="kc-verify-form" novalidate>
+        <label for="kc-seal-code">Code printed on your packaging</label>
+        <input id="kc-seal-code" name="seal" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="40" placeholder="KC-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX">
+        <button type="submit">Check record</button>
+      </form>
+
+      <div class="kc-seal kc-seal--panel" data-kc-seal data-state="checking" data-seal-id=""
+           data-endpoint="/api/v1/heartbeat" data-official-origin="" data-public-keys="[]"
+           data-timezone="Europe/Madrid" data-interval="60" data-form="kc-verify-form">
+        <img class="kc-seal__mark" src="/theme-assets/kc-seal-navy-gold.svg" alt="K-Cosmetics seal" width="112" height="112">
+        <div class="kc-seal__text">
+          <span><span class="kc-seal__status" data-kc-status>Checking record…</span><span class="kc-seal__test" data-kc-test hidden>TEST RECORD</span></span>
+          <p class="kc-seal__message" data-kc-message></p>
+          <span class="kc-seal__time" data-kc-time></span>
+          <span class="kc-seal__ago" data-kc-ago></span>
+          <p class="kc-seal__note" data-kc-note hidden></p>
+          <div data-kc-details hidden></div>
+        </div>
+        <p class="kc-seal__sr" data-kc-live aria-live="polite" role="status"></p>
+      </div>
+
+      <div class="kc-verify__explain">
+        <div class="kc-verify__card">
+          <h2>What a Verified Record means</h2>
+          <ul>
+            <li>Our server has a current K-Cosmetics record for this code, checked within the last minute.</li>
+            <li>The product SKU, manufacturer batch and supplier approval on the record are shown above.</li>
+            <li>The answer is digitally signed by K-Cosmetics and checked by your browser.</li>
+          </ul>
+        </div>
+        <div class="kc-verify__card">
+          <h2>What it does not mean</h2>
+          <ul>
+            <li>A valid digital record does not by itself prove that the physical item in your hands is authentic.</li>
+            <li>It is not a third-party certification.</li>
+            <li>A seal image on another website or a screenshot cannot be verified. Check codes only on this page.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="kc-verify__privacy">Privacy: this check uses no cookies and does not ask for personal data. Your IP address is not stored; a daily-rotating pseudonymous identifier is kept for up to 30 days to prevent abuse. See our Privacy Policy.</p>
+    </div>
+  </section>
+  <script src="demo-loader.js"></script>
+</body>
+</html>

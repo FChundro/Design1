@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>TEST product page mock – K-Cosmetics EU (PROTOTYPE)</title>
+  <link rel="stylesheet" href="demo.css">
+  <link rel="stylesheet" href="/theme-assets/kc-seal.css">
+</head>
+<body>
+  <div class="demo-bar">LOCAL PROTOTYPE – NOT THE LIVE STORE – TEST RECORDS ONLY</div>
+  <header class="demo-header">
+    <a class="demo-brand" href="index.html">K-Cosmetics</a>
+    <nav class="demo-nav" aria-label="Demo"><a href="index.html">Check a record</a><a href="product.html">Product page mock</a></nav>
+  </header>
+  <main class="demo-product">
+    <div class="demo-product__grid">
+      <div class="demo-product__media">Product gallery placeholder<br>(Horizon theme gallery on the real store)</div>
+      <div>
+        <h1>TEST RECORD – Demo Centella Ampoule 100 ml</h1>
+        <p>Layout mock to show where the small heartbeat seal sits on a product page. Product content, price and add-to-cart come from the existing theme and are not changed by this project.</p>
+      </div>
+    </div>
+    <div class="demo-product__foot">
+      <div class="demo-routine">
+        <h2>Complete Your Routine</h2>
+        <p>Existing theme block (unchanged) – shown for position only.</p>
+      </div>
+      <!-- Mirrors theme/blocks/kc-seal-badge.liquid output -->
+      <div class="kc-seal-badge-wrap">
+        <div class="kc-seal kc-seal--badge" data-kc-seal data-state="checking" data-seal-id="KC-TEST-VERI-FIED-AAAA-AAAA-AAA2"
+             data-endpoint="/api/v1/heartbeat" data-official-origin="" data-public-keys="[]"
+             data-timezone="Europe/Madrid" data-interval="60">
+          <a class="kc-seal__link" data-kc-link href="index.html">
+            <img class="kc-seal__mark" src="/theme-assets/kc-seal-navy-gold.svg" alt="K-Cosmetics seal" width="48" height="48">
+            <span class="kc-seal__text">
+              <span><span class="kc-seal__status" data-kc-status>Checking record…</span><span class="kc-seal__test" data-kc-test hidden>TEST RECORD</span></span>
+              <span class="kc-seal__time" data-kc-time></span>
+              <span class="kc-seal__ago" data-kc-ago></span>
+            </span>
+          </a>
+          <p class="kc-seal__sr" data-kc-live aria-live="polite" role="status"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="demo-loader.js"></script>
+</body>
+</html>
